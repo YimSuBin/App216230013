@@ -1,0 +1,247 @@
+package com.example.hywoman.a2a216230013;
+
+import android.content.DialogInterface;
+ import android.os.Bundle;
+ import android.support.annotation.Nullable;
+ import android.support.design.widget.Snackbar;
+ import android.support.v4.app.Fragment;
+ import android.support.v7.app.AlertDialog;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.LinearLayout;
+ import android.widget.RadioButton;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ import java.text.SimpleDateFormat;
+ import java.util.Date;
+
+public class Fragment1 extends Fragment {
+
+    Button button, button2, button3;
+
+    Button[] btn = new Button[4];
+
+    TextView textView1, textView2, textView3, textView4, textView5, textView6;
+
+    LinearLayout linearLayout;
+
+    View v;
+
+    ThemePark[] table = new ThemePark[4];
+
+    String[] name = {"예약정보 1", "예약정보 2", "예약정보 3", "예약정보 4"};
+
+    LayoutInflater inflater;
+
+    int Selected;
+
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         this.inflater = inflater;
+         v = inflater.inflate(R.layout.fragment1, container, false);
+
+         init();
+         return v;
+
+    }
+
+    void init() {
+         btn[0] = (Button) v.findViewById(R.id.button);
+         btn[1] = (Button) v.findViewById(R.id.button2);
+         btn[2] = (Button) v.findViewById(R.id.button3);
+         btn[3] = (Button) v.findViewById(R.id.button4);
+
+         button = (Button) v.findViewById(R.id.btn1);
+         button2 = (Button) v.findViewById(R.id.btn2);
+         button3 = (Button) v.findViewById(R.id.btn3);
+
+         linearLayout = (LinearLayout) v.findViewById(R.id.linear);
+
+         textView1 = (TextView) v.findViewById(R.id.textView1);
+         textView2 = (TextView) v.findViewById(R.id.textView2);
+         textView3 = (TextView) v.findViewById(R.id.textView3);
+         textView4 = (TextView) v.findViewById(R.id.textView4);
+         textView5 = (TextView) v.findViewById(R.id.textView5);
+         textView6 = (TextView) v.findViewById(R.id.textView6);
+
+         btn[0].setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                 Selected = 0;
+                 if (table[Selected] == null) {
+                     Emptytext();
+                } else {
+                     getTable(0);
+                }
+            }
+        });
+
+         btn[1].setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                 Selected = 1;
+                 if (table[Selected] == null) {
+                     Emptytext();
+                } else {
+                     getTable(1);
+                }
+            }
+        });
+
+        btn[2].setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                 Selected = 2;
+                 if (table[Selected] == null) {
+                     Emptytext();
+                } else {
+                     getTable(2);
+                }
+            }
+        });
+
+         btn[3].setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                 Selected = 3;
+                 if (table[Selected] == null) {
+                     Emptytext();
+                } else {
+                     getTable(3);
+                }
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                 setTable();
+            }
+        });
+
+         button2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (table[Selected] == null) {
+                     Emptytext();
+                } else {
+                     ChangeInformation();
+                }
+            }
+        });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                 Toast.makeText(getActivity(), "초기화 되었습니다.", Toast.LENGTH_LONG).show();
+                 if (table[Selected] != null) {
+                     resetMethod();
+                }
+            }
+        });
+    }
+
+    void Emptytext() {
+         button.setEnabled(true);
+         linearLayout.setVisibility(View.VISIBLE);
+         Toast.makeText(getActivity(), "비어있는 테이블입니다.", Toast.LENGTH_SHORT).show();
+         resetTextView();
+    }
+
+    void getTable(int i) {
+         button.setEnabled(false);
+         textView1.setText(table[i].getTableName());
+         textView2.setText(table[i].getEnterTime());
+         textView3.setText(table[i].getNumber());
+         textView4.setText(table[i].getTicket());
+         textView5.setText(table[i].getMember());
+         textView6.setText(table[i].getPrice());
+    }
+
+           //테이블에 정보 입력하는 메소드
+    void setTable() {
+        callDialog("정보가 입력되었습니다.", true, "정보 입력");
+    }
+
+     //현재 시간 얻는 메소드
+    String getTime() {
+         String time;
+         long now = System.currentTimeMillis();
+               // 현재시간을 date 변수에 저장한다.
+         Date date = new Date(now);
+                 // 시간을 나타냇 포맷을 정한다 ( yyyy/MM/dd 같은 형태로 변형 가능 )
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm");
+                 // nowDate 변수에 값을 저장한다.
+         time = sdf.format(date);
+         return time;
+    }
+
+    void ChangeInformation() {
+         callDialog("정보가 수정되었습니다.", false, "정보 수정");
+    }
+
+    void resetMethod() {
+         button.setEnabled(true);
+         btn[Selected].setText(table[Selected].getTableName() + ("(비어있음)"));
+         table[Selected] = null;
+         resetTextView();
+    }
+
+    void callDialog(String s, boolean a, String s2) {
+         View dlgView = inflater.inflate(R.layout.dialog, null);
+         AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+         final EditText editText = (EditText) dlgView.findViewById(R.id.editText);
+         final EditText editText2 = (EditText) dlgView.findViewById(R.id.editText2);
+         final RadioButton radioButton = (RadioButton) dlgView.findViewById(R.id.radioButton);
+         final String str = s;
+         final boolean b = a;
+
+         dlg.setTitle(s2)
+         .setView(dlgView)
+         .setNegativeButton("닫기", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        })
+         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                 String number = editText.getText().toString();
+                 String ticket = editText2.getText().toString();
+                int price = Integer.parseInt(number) * 10000 + Integer.parseInt(ticket) * 120000;
+                 if (b) {
+                     table[Selected] = new ThemePark(name[Selected], getTime());
+                     textView1.setText(table[Selected].getTableName());
+                     textView2.setText(table[Selected].getEnterTime());
+                }
+
+                 table[Selected].setNumber(number);
+                 table[Selected].setTicket(ticket);
+
+                 if (radioButton.isChecked()) {
+                     table[Selected].setMember("기본멤버쉽");
+                     price = (int) (price * 0.9);
+                } else {
+                     table[Selected].setMember("Vip멤버쉽");
+                     price = (int) (price * 0.7);
+                }
+
+                 table[Selected].setPrice(price + "");
+
+                 textView3.setText(table[Selected].getNumber());
+                 textView4.setText(table[Selected].getTicket());
+                 textView5.setText(table[Selected].getMember());
+                 textView6.setText(table[Selected].getPrice());
+
+                 btn[Selected].setText(table[Selected].getTableName());
+
+                 button.setEnabled(false);
+                 Snackbar.make(v, str, Snackbar.LENGTH_LONG).show();
+            }
+        })
+         .show();
+    }
+    //textView 리셋 메소드
+    void resetTextView() {
+         textView1.setText("");
+         textView2.setText("");
+         textView3.setText("");
+         textView4.setText("");
+         textView5.setText("");
+         textView6.setText("");
+    }
+}
